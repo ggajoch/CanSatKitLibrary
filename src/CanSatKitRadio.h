@@ -5,10 +5,36 @@
 
 namespace CanSatKit {
 
+/**
+ * @brief Frame object represents one radio frame to be send over the RF link.
+ * Use it the same as Serial/SerialUSB devices.
+ * Remembers data in internal buffer, to be send using radio.transmit() method.
+ * Maximum data length is 254 bytes (+1 byte of null termination).
+ */
 class Frame : public Print {
-  public:
-  constexpr static std::uint8_t max_size = 255;
+ public:
+  /**
+  * @brief actual size of the frame (string length)
+  */
   std::uint8_t size;
+
+  /**
+   * @brief Returns null-terminated string object
+   * 
+   * @return const char* string object
+   */
+  operator const char*() {
+    buffer[size] = '\0';
+    return buffer;
+  }
+
+  void clear() {
+    size = 0;
+  }
+
+
+ private:
+  constexpr static std::uint8_t max_size = 255;
   char buffer[max_size];
 
   Frame() : size(0) {}
@@ -20,15 +46,6 @@ class Frame : public Print {
     }
     buffer[size++] = x;
     return 1;
-  }
-
-  operator const char*() {
-    buffer[size] = '\0';
-    return buffer;
-  }
-
-  void clear() {
-    size = 0;
   }
 };
 
